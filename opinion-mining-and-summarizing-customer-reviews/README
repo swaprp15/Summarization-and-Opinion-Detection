@@ -1,0 +1,8 @@
+NOTE : Currently End-to-End is not integrated .
+
+
+Please import the project in eclipse. Soon we will setup shell scripts to execute the project.
+
+To see the feature extraction please run the class FeatureExtractionMain
+
+To see the sentiment analysis please run the class SentimentAnalysisMain

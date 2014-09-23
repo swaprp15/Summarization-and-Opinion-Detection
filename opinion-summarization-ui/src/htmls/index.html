@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myModule">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>quikRRRiew</title>
+
+    <!-- Bootstrap -->
+    <link href="../libs/bootstrap-3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/starter-template.css" rel="stylesheet">
+    <link href="../css/simple-sidebar.css" rel="stylesheet">
+  </head>
+
+<body class="dark">
+  <script src="../libs/jquery-1.11.0/jquery.min.js"></script>
+  <script src="../libs/bootstrap-3.1.1/js/bootstrap.min.js"></script>
+  <script src="../libs/angular-1.2.16/angular.js"></script>
+  <script src="../libs/angular-1.2.16/angular-route.js"></script>
+  <script src="../libs/angular-1.2.16/angular-resource.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/google-charts.js" type="text/javascript"></script>
+
+  
+
+ <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#"><font size="40">QUIKRRiew</font></a>
+        </div>
+       
+      </div>
+    </div>
+    <div id="wrapper" ng-controller="productSummaryController">
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand"><a href="#">Categories</a></li>
+                <li ng-repeat="category in categories"><a href="#{{category}}" ng-click="getProductsInfoForCategory(category)">{{category}}</a></li>
+            </ul>
+        </div>
+
+        <!-- Page content -->
+        <div id="page-content-wrapper">
+
+            <div class="page-content inset">
+              <div id="produtSummary">
+                 <div class="row" ng-repeat="prodSummary in productSummaries">
+                        <div  class="col-sm-1">
+                            <img height="90" width="70" ng-src="../images/{{prodSummary.productId}}.jpg"/>
+                        </div>
+                        <div  class="col-sm-4">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <font size="2px">{{prodSummary.productName}}</font>
+                                </div>
+                                <div class="panel-body">
+                                    <span class="glyphicon glyphicon-star pull-left" ng-repeat="i in getNumber(prodSummary.rating) track by $index"></span>
+                                    <a href="#"><span class="glyphicon glyphicon-info-sign pull-right" ng-click="featureSummaryClicked(prodSummary.productId)" data-toggle="modal" data-target="#myModal"></span></a>
+                                </div>
+                            </div>   
+                        </div>
+        
+                          <div class="col-sm-4">
+                                    <div id='{{prodSummary.productId}}' style="width: 250px; height: 90px;"></div>
+                           </div>
+                     </div>
+                </div>
+            </div> 
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+            <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">{{currentClickedProductSummary.productName}}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                 <div class="col-sm-12">
+                                    <div id="barchart"></div>
+                                 </div>
+                            </div>
+                            <span><h3>Features:</h3></span>
+                            <div class="row" ng-repeat="featureSummary in currentClickedProductSummary.featureSummaries">
+                                <div class="span12 collapse-group">
+                                      <a class="btn" href="#/{{featureSummary.featureName}}"><h4><font color="blue">{{$index+1}}) {{featureSummary.featureName}}</font></h4></a>
+                                      <div class="collapse">
+                                          <h5><font color="green">Postive:</font></h5>
+
+                                          <div ng-repeat="positivesentiment in featureSummary.postiveSentiments">
+                                                <a href="#" ng-click="showCompleteReview(currentClickedProductSummary.productId,positivesentiment.reviewId)" data-toggle="modal" data-target="#reiewModal">{{positivesentiment.sentence}}</a>
+                                                <br/>
+                                          </div>
+
+                                          <br/>
+                                          <h5><font color="red">Negative:</font></h5>
+                                           <div ng-repeat="negativesentiment in featureSummary.negativeSentiments">
+                                                <a href="#" ng-click="showCompleteReview(currentClickedProductSummary.productId,negativesentiment.reviewId)" data-toggle="modal" data-target="#reiewModal">{{negativesentiment.sentence}}</a>
+                                                <br/>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                     </div>
+            </div>
+
+
+            <div class="modal fade" id="reiewModal" tabindex="-1" role="dialog" aria-labelledby="reiewModalLabel" aria-hidden="true">
+
+            <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="reiewModalLabel">Review Text</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                 <span>{{currentReview}}</span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                     </div>
+            </div>
+    </div>
+
+    <script type="text/javascript">
+
+      $('#myModal').on('show.bs.modal', function () {
+        angular.element(document.getElementById('wrapper')).scope().drawProdFeaturesChart('barchart');
+      })
+
+      $('#myModal').on('shown.bs.modal', function () {
+
+        $('.row .btn').on('click', function(e) {
+                  e.preventDefault();
+                  var $this = $(this);
+                  var $collapse = $this.closest('.collapse-group').find('.collapse');
+                  $collapse.collapse('toggle');
+         });
+      })
+
+
+
+    </script>
+
+</body>
+
+</html>
